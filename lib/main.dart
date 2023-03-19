@@ -19,6 +19,7 @@ import 'package:womanly_mobile/domain/impl/library_manager_prefs_impl.dart';
 import 'package:womanly_mobile/domain/impl/library_state_impl.dart';
 import 'package:womanly_mobile/domain/library_manager.dart';
 import 'package:womanly_mobile/domain/library_state.dart';
+import 'package:womanly_mobile/presentation/misc/analytics/session_manager.dart';
 import 'package:womanly_mobile/presentation/misc/log.dart';
 import 'package:womanly_mobile/presentation/screens/product/product_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,7 @@ import 'presentation/common/widgets/debug_space_devourer.dart';
 import 'presentation/misc/analytics/event_measure_load_time.dart';
 
 late SharedPreferences sharedPreferences;
+late SessionManager sessionManager;
 late FirebaseApp firebaseApp;
 
 const kEnvironment = String.fromEnvironment("ENVIRONMENT",
@@ -42,6 +44,7 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     sharedPreferences = await SharedPreferences.getInstance();
     EventMeasureLoadTime.reset(EventMeasureLoadTime.totalWithRetries);
+    sessionManager = SessionManager(sharedPreferences);
     runApp(HomePage());
   }, (error, stack) {
     Log.errorMainZonedGuarded(error, stack);
