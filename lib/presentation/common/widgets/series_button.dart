@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:womanly_mobile/domain/data_repository.dart';
 import 'package:womanly_mobile/domain/entities/book.dart';
@@ -37,16 +38,27 @@ class SeriesButton extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         alignment: Alignment.center,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
-              child: Text(
-                'Series: ${series.title} #$indexInSeries ',
-                style: ThemeTextStyle.s17w400.copyWith(
-                  color: ThemeColors.accentBlueTextTabActive,
-                ),
-                maxLines: 1,
-                textAlign: TextAlign.center,
-              ),
+              child: LayoutBuilder(builder: (_, constrains) {
+                String text = 'Series: ${series.title} #$indexInSeries ';
+                final TextPainter tp = textPainter(text)..layout(maxWidth: constrains.maxWidth);
+                final isTextOverflowed = tp.didExceedMaxLines;
+                if (isTextOverflowed) {
+                  return Marquee(
+                    text: text,
+                    blankSpace: 20.0,
+                    velocity: 20.0,
+                    style: textStyle,
+                  );
+                }
+                return Text(
+                  text,
+                  maxLines: 1,
+                  style: textStyle,
+                );
+              }),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 2),
@@ -62,4 +74,17 @@ class SeriesButton extends StatelessWidget {
       ),
     );
   }
+
+  TextPainter textPainter(String text) => TextPainter(
+        maxLines: 1,
+        textAlign: TextAlign.start,
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+          text: text,
+          style: textStyle,
+        ),
+      );
+  TextStyle get textStyle => ThemeTextStyle.s17w400.copyWith(
+        color: ThemeColors.accentBlueTextTabActive,
+      );
 }
