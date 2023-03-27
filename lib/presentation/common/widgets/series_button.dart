@@ -31,38 +31,33 @@ class SeriesButton extends StatelessWidget {
         Log.dialog(context, "Navigate to the series");
       },
       child: Container(
-        color:
-            debugColorListenButtonPositions ? Colors.green : Colors.transparent,
+        color: debugColorListenButtonPositions ? Colors.green : Colors.transparent,
         height: height,
         padding: const EdgeInsets.only(bottom: 3),
         margin: const EdgeInsets.symmetric(horizontal: 16),
         alignment: Alignment.center,
-        child: RichText(
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: ThemeTextStyle.s17w400.copyWith(
-              color: ThemeColors.accentBlueTextTabActive,
-            ),
-            children: [
-              TextSpan(
-                text: 'Series: ${series.title} #$indexInSeries ',
-              ),
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Image.asset(
-                    "assets/images/icons/arrow_right2.png",
-                    color: const Color(0xFF648BC6),
-                    width: 20,
-                    height: 20,
-                  ),
+        child: Row(
+          children: [
+            Flexible(
+              child: Text(
+                'Series: ${series.title} #$indexInSeries ',
+                style: ThemeTextStyle.s17w400.copyWith(
+                  color: ThemeColors.accentBlueTextTabActive,
                 ),
+                maxLines: 1,
+                textAlign: TextAlign.center,
               ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Image.asset(
+                "assets/images/icons/arrow_right2.png",
+                color: const Color(0xFF648BC6),
+                width: 20,
+                height: 20,
+              ),
+            ),
+          ],
         ),
       ),
     );
