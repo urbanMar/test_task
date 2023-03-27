@@ -203,7 +203,7 @@ class BackBlur extends StatelessWidget {
         ),
         Positioned(
           width: screenWidth,
-          height: imageSize + 30,
+          height: imageSize + 100,
           top: positionTop,
           child: Container(
               width: screenWidth,
@@ -213,9 +213,11 @@ class BackBlur extends StatelessWidget {
                 ThemeColors.accentBackground.withOpacity(0.7),
                 ThemeColors.accentBackground.withOpacity(0.7),
                 ThemeColors.accentBackground.withOpacity(1),
+                Colors.transparent
               ], stops: const [
                 0.0,
                 0.75,
+                0.9,
                 1
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter))),
         ),

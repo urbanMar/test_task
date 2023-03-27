@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:resize/resize.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:womanly_mobile/data/common_prefs.dart';
 import 'package:womanly_mobile/data/impl/data_repository_impl.dart';
 import 'package:womanly_mobile/data/impl/storage_manager_impl.dart';
 import 'package:womanly_mobile/data/models/book_model.dart';
@@ -36,8 +35,7 @@ late SharedPreferences sharedPreferences;
 late SessionManager sessionManager;
 late FirebaseApp firebaseApp;
 
-const kEnvironment = String.fromEnvironment("ENVIRONMENT",
-    defaultValue: "PROD"); //'TEST' or 'PROD'
+const kEnvironment = String.fromEnvironment("ENVIRONMENT", defaultValue: "PROD"); //'TEST' or 'PROD'
 
 void main() async {
   runZonedGuarded<Future<void>>(() async {
@@ -137,13 +135,10 @@ class _ProvidersWrapperState extends State<ProvidersWrapper> {
         Provider<StorageManager>.value(value: storageManager),
         Provider<DataRepository>.value(value: dataRepository),
         Provider<LibraryManager>(
-            create: (context) => LibraryManagerPrefsImpl(
-                context.read<SharedPreferences>(),
-                context.read<DataRepository>()),
-            lazy: false),
-        ChangeNotifierProvider<LibraryState>(
             create: (context) =>
-                LibraryStateImpl(context.read<LibraryManager>())),
+                LibraryManagerPrefsImpl(context.read<SharedPreferences>(), context.read<DataRepository>()),
+            lazy: false),
+        ChangeNotifierProvider<LibraryState>(create: (context) => LibraryStateImpl(context.read<LibraryManager>())),
         ChangeNotifierProvider<AudioPlayer>(
             create: (context) => AudioPlayerImpl(
                   context.read<LibraryState>(),
