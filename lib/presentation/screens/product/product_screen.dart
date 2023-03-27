@@ -15,7 +15,6 @@ import 'package:womanly_mobile/presentation/common/widgets/book_cover.dart';
 import 'package:womanly_mobile/presentation/common/widgets/book_peppers.dart';
 import 'package:womanly_mobile/presentation/common/widgets/book_shelf.dart';
 import 'package:womanly_mobile/presentation/common/widgets/featured/featured_books.dart';
-import 'package:womanly_mobile/presentation/common/widgets/featured/featured_small_sceleton.dart';
 import 'package:womanly_mobile/presentation/common/widgets/mini_player_placeholder.dart';
 import 'package:womanly_mobile/presentation/common/widgets/my_list_button.dart';
 import 'package:womanly_mobile/presentation/common/widgets/sample_button.dart';
@@ -59,13 +58,9 @@ class ProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final libraryState = context.read<LibraryState>();
     final allBooks = context.read<DataRepository>().books;
-    final finishedBookIds = allBooks
-        .where((it) => libraryState.isFinished(it))
-        .map((it) => it.id)
-        .toList();
+    final finishedBookIds = allBooks.where((it) => libraryState.isFinished(it)).map((it) => it.id).toList();
     return ChangeNotifierProvider<ProductState>(
-      create: (context) => ProductState(
-          book, finishedBookIds, BookShelf.availableBooks(context, allBooks)),
+      create: (context) => ProductState(book, finishedBookIds, BookShelf.availableBooks(context, allBooks)),
       child: Placement.named(
         placement,
         subplacement: "book",
@@ -91,11 +86,10 @@ class _ProductScreenBodyState extends State<ProductScreenBody> {
   @override
   void initState() {
     super.initState();
-    scrollController.addListener(() => _updateListenButtonPosition(context,
-        scrollController.offset, widget.book.isSharingEmotionsEnabled));
+    scrollController.addListener(
+        () => _updateListenButtonPosition(context, scrollController.offset, widget.book.isSharingEmotionsEnabled));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _updateListenButtonPosition(
-          context, 0, widget.book.isSharingEmotionsEnabled);
+      _updateListenButtonPosition(context, 0, widget.book.isSharingEmotionsEnabled);
     });
   }
 
@@ -135,14 +129,12 @@ class _ProductScreenBodyState extends State<ProductScreenBody> {
     );
   }
 
-  void _updateListenButtonPosition(
-      BuildContext context, double offset, bool isSharingEmotions) {
+  void _updateListenButtonPosition(BuildContext context, double offset, bool isSharingEmotions) {
     final dataRepository = context.read<DataRepository>();
     final prefs = context.read<SharedPreferences>();
     final Series? series = dataRepository.getSeries(widget.book);
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double minPosition =
-        MediaQuery.of(context).padding.top + _appBarHeight;
+    final double minPosition = MediaQuery.of(context).padding.top + _appBarHeight;
     double limit = MediaQuery.of(context).padding.top +
         _headersAdditionalTopPadding +
         (screenWidth - 2 * coverHorizontalPadding) +
@@ -168,8 +160,7 @@ class _ProductScreenBodyState extends State<ProductScreenBody> {
       limit += 14;
     }
 
-    context.read<ProductState>().setButtonPosition(
-        offset, limit, minPosition, scrollController.hasClients);
+    context.read<ProductState>().setButtonPosition(offset, limit, minPosition, scrollController.hasClients);
   }
 }
 
@@ -185,8 +176,7 @@ class BackBlur extends StatelessWidget {
   Widget build(BuildContext context) {
     const backImageBlur = 20.0;
     final double screenWidth = MediaQuery.of(context).size.width;
-    final buttonPosition =
-        context.select<ProductState, double>((state) => state.buttonPosition);
+    final buttonPosition = context.select<ProductState, double>((state) => state.buttonPosition);
     final double imageSize = screenWidth * 1.35;
     final double positionLeft = -(imageSize - screenWidth) / 2;
     var positionTop = -imageSize + buttonPosition;
@@ -237,8 +227,7 @@ class BackBlur extends StatelessWidget {
 class BookScreenBody extends StatelessWidget {
   final Book book;
   final ScrollController scrollController;
-  const BookScreenBody(this.book, this.scrollController, {Key? key})
-      : super(key: key);
+  const BookScreenBody(this.book, this.scrollController, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -251,34 +240,26 @@ class BookScreenBody extends StatelessWidget {
       radiusTopRight: topChips ? 0 : 10,
       enableRouting: false,
       showEmotions: false,
-      expirationTimerSettings:
-          const ExpirationTimerSettings(blurWhenGone: false),
+      expirationTimerSettings: const ExpirationTimerSettings(blurWhenGone: false),
     );
 
     final dataRepository = context.read<DataRepository>();
     final allBooks = BookShelf.availableBooks(context, dataRepository.books);
-    final featuredMoreLikeThis =
-        context.select<ProductState, Featured?>((state) => state.moreLikeThis);
+    final featuredMoreLikeThis = context.select<ProductState, Featured?>((state) => state.moreLikeThis);
     final featuredMoreByThisAuthor = Featured(
         "More by this author",
         allBooks
-            .where((it) =>
-                it.author == book.author &&
-                it.id != book.id) //TODO: more than 1 author
+            .where((it) => it.author == book.author && it.id != book.id) //TODO: more than 1 author
             .toList(),
         FeaturedStyle.small);
     final authorBooksIds = featuredMoreByThisAuthor.books.map((it) => it.id);
     final featuredMoreByThisNarrator = Featured(
         "More by these narrators",
         allBooks
-            .where((it) =>
-                _commonNarrators(it, book) &&
-                it.id != book.id &&
-                !authorBooksIds.contains(it.id))
+            .where((it) => _commonNarrators(it, book) && it.id != book.id && !authorBooksIds.contains(it.id))
             .toList(),
         FeaturedStyle.small);
-    final featuredDescription = Featured(
-        "Description", [], FeaturedStyle.medium); //TODO: more than 1 narrator
+    final featuredDescription = Featured("Description", [], FeaturedStyle.medium); //TODO: more than 1 narrator
 
     const backImageBlur = 24.0;
 
@@ -289,8 +270,7 @@ class BookScreenBody extends StatelessWidget {
           width: screenWidth,
           height: screenWidth -
               2 * coverHorizontalPadding +
-              ((book.expirationTimerDays(context.read<SharedPreferences>()) !=
-                      null)
+              ((book.expirationTimerDays(context.read<SharedPreferences>()) != null)
                   ? bookCover.expirationTimerSettings.height
                   : 0),
           child: Stack(
@@ -298,8 +278,7 @@ class BookScreenBody extends StatelessWidget {
             children: [
               if (!newProduct)
                 Container(
-                  margin:
-                      EdgeInsets.symmetric(horizontal: coverHorizontalPadding),
+                  margin: EdgeInsets.symmetric(horizontal: coverHorizontalPadding),
                   child: Center(
                     child: ImageFiltered(
                       imageFilter: ImageFilter.blur(
@@ -315,8 +294,7 @@ class BookScreenBody extends StatelessWidget {
                 // decoration: BoxDecoration(
                 //     borderRadius: const BorderRadius.all(Radius.circular(10)),
                 //     border: Border.all(width: 2, color: Colors.white)),
-                margin:
-                    EdgeInsets.symmetric(horizontal: coverHorizontalPadding),
+                margin: EdgeInsets.symmetric(horizontal: coverHorizontalPadding),
                 child: bookCover,
               ),
               // if (newProduct)
@@ -351,8 +329,7 @@ class BookScreenBody extends StatelessWidget {
       ),
       const SizedBox(height: 16),
       Container(
-        color:
-            debugColorListenButtonPositions ? Colors.red : Colors.transparent,
+        color: debugColorListenButtonPositions ? Colors.red : Colors.transparent,
         height: _tropes2linesHeight,
         // padding: const EdgeInsets.only(bottom: 16),
         child: Align(
@@ -365,8 +342,7 @@ class BookScreenBody extends StatelessWidget {
       SpecialPriceContainer(book),
       Container(
         margin: EdgeInsets.only(top: (false) ? 40 : 0),
-        color:
-            debugColorListenButtonPositions ? Colors.pink : Colors.transparent,
+        color: debugColorListenButtonPositions ? Colors.pink : Colors.transparent,
         padding: const EdgeInsets.only(top: 18, bottom: 16 - 4),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           if (newProduct) const SizedBox(width: 30),
@@ -400,13 +376,11 @@ class BookScreenBody extends StatelessWidget {
       // ),
       Visibility(
         visible: !book.isSharingEmotionsEnabled,
-        child: Placement.named(featuredMoreByThisAuthor.title,
-            child: FeaturedBooks(featuredMoreByThisAuthor)),
+        child: Placement.named(featuredMoreByThisAuthor.title, child: FeaturedBooks(featuredMoreByThisAuthor)),
       ),
       Visibility(
         visible: !book.isSharingEmotionsEnabled,
-        child: Placement.named(featuredMoreByThisNarrator.title,
-            child: FeaturedBooks(featuredMoreByThisNarrator)),
+        child: Placement.named(featuredMoreByThisNarrator.title, child: FeaturedBooks(featuredMoreByThisNarrator)),
       ),
       const MiniPlayerPlaceholder(),
     ];
@@ -422,10 +396,8 @@ class BookScreenBody extends StatelessWidget {
   }
 
   bool _commonNarrators(Book a, Book b) {
-    final narratorsA =
-        a.actors.where((it) => !it.isAuthor).map((it) => it.id).toSet();
-    final narratorsB =
-        b.actors.where((it) => !it.isAuthor).map((it) => it.id).toSet();
+    final narratorsA = a.actors.where((it) => !it.isAuthor).map((it) => it.id).toSet();
+    final narratorsB = b.actors.where((it) => !it.isAuthor).map((it) => it.id).toSet();
     return narratorsA.intersection(narratorsB).isNotEmpty;
   }
 }
@@ -455,8 +427,7 @@ class RatingEndDuration extends StatelessWidget {
             child: Text(
               book.totalDuration.hoursAndMinutes,
               style: ThemeTextStyle.s15w500.copyWith(
-                color:
-                    newProduct ? Colors.white.withOpacity(0.5) : Colors.white,
+                color: newProduct ? Colors.white.withOpacity(0.5) : Colors.white,
               ),
             ),
           ),
@@ -486,22 +457,48 @@ class ProductTropes extends StatelessWidget {
   final Book book;
   const ProductTropes(this.book, {Key? key}) : super(key: key);
 
+  final int maxLines = 2;
+  final TextAlign textAlign = TextAlign.center;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: newProduct ? 30 : 16),
-      child: Text(
-        book.tropes(5),
-        textAlign: TextAlign.center,
-        style: newProduct
-            ? ThemeTextStyle.s15w400.copyWith(color: const Color(0xB3FFFFFF))
-            : ThemeTextStyle.s14w400.copyWith(
-                color: const Color(0xB3FFFFFF),
-              ),
-        maxLines: 2,
-      ),
+      child: LayoutBuilder(builder: (_, constrains) {
+        String tags = '';
+        for (int i = 5; i > 0; i--) {
+          tags = book.tropes(i);
+          final TextPainter tp = textPainter(tags)..layout(maxWidth: constrains.maxWidth);
+          final isTextOverflowed = tp.didExceedMaxLines;
+          if (!isTextOverflowed) {
+            break;
+          }
+        }
+        return Text(
+          tags,
+          textAlign: textAlign,
+          style: textStyle,
+          maxLines: maxLines,
+        );
+      }),
     );
   }
+
+  TextPainter textPainter(String text) => TextPainter(
+        maxLines: maxLines,
+        textAlign: textAlign,
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+          text: text,
+          style: textStyle,
+        ),
+      );
+
+  TextStyle get textStyle => newProduct
+      ? ThemeTextStyle.s15w400.copyWith(color: const Color(0xB3FFFFFF))
+      : ThemeTextStyle.s14w400.copyWith(
+          color: const Color(0xB3FFFFFF),
+        );
 }
 
 class SpecialPriceContainer extends StatelessWidget {
@@ -518,9 +515,7 @@ class SpecialPriceContainer extends StatelessWidget {
 
     return SizedBox(
       height: PressButton.height + 8 + 16 + (showSpecialPriceLabel ? 11 : 0),
-      child: showSpecialPriceLabel
-          ? SpecialPriceOff(book)
-          : const SizedBox.shrink(),
+      child: showSpecialPriceLabel ? SpecialPriceOff(book) : const SizedBox.shrink(),
     );
   }
 }
@@ -545,9 +540,7 @@ class SpecialPriceOff extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
-      int percent =
-          (100 * (originalPriceDouble - offerPriceDouble) / originalPriceDouble)
-              .round();
+      int percent = (100 * (originalPriceDouble - offerPriceDouble) / originalPriceDouble).round();
 
       text = "$percent% off original price $originalPriceString";
     }
